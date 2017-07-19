@@ -15,7 +15,7 @@ const FlexibleXYPlot = makeWidthFlexible(XYPlot);
 
 class LineGraph extends Component {
   parseLine(data, x, y) {
-    return data.map(sample => {
+    return data.map((sample, index) => {
       return {
         x: parseFloat(sample[x]),
         y: parseFloat(sample[y])
@@ -23,23 +23,23 @@ class LineGraph extends Component {
     });
   }
   render() {
-    const { data } = this.props;
-    console.log("v", this.parseLine(data));
-    // <div>{this.props.data.map(x => <div>{this.parseLine(x)}</div>)}</div>
-    console.log(this.props.data[0]);
+    const { data, x, y } = this.props;
+    if (data.length === 0) return <div>Open a CSV File</div>;
+    const xTitle = Object.keys(data[0])[x];
+    const yTitle = Object.keys(data[0])[y];
     return (
-      <FlexibleXYPlot height={400}>
-        <HorizontalGridLines values="Seconds" />
-        <VerticalGridLines />
-        <LineSeries
-          stroke="#11939a"
-          fill="none"
-          strokeWidth={2}
-          data={this.parseLine(this.props.data, "Time (sec)", "ECU: MAP (PSI)")}
-        />
-        <XAxis title={"Time (sec)"}/>
-        <YAxis title={"ECU: MAP (PSI)"} />
-      </FlexibleXYPlot>
+          <FlexibleXYPlot height={400}>
+            <HorizontalGridLines values="Seconds" />
+            <VerticalGridLines />
+            <LineSeries
+              stroke="#11939a"
+              fill="none"
+              strokeWidth={2}
+              data={this.parseLine(data, xTitle, yTitle)}
+            />
+            <XAxis title={xTitle}/>
+            <YAxis title={yTitle} />
+          </FlexibleXYPlot>
     );
   }
 }

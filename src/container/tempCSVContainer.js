@@ -5,21 +5,45 @@ const electron = window.require('electron');
 const { ipcRenderer }  = electron;
 
 class TempContainer extends Component {
-  state = { data: [] };
+  state = { data: [], x: 0, y: 1 };
 
   componentWillMount() {
-    this.ipc = ipcRenderer.on('csv:open', (e, d) =>
-        this.setState({ data: ParseCSV(d).data }));
+    this.ipc = ipcRenderer.on('csv:open', (e, d) => {
+      const data = ParseCSV(d).data;
+      console.log(data);
+      const { x, y } = this.defaultAxis(data);
+      this.setState({ data, x, y });
+    });
+    document.addEventListener("keydown", this.handleKeyDown);
   }
-
+  defaultAxis = (data) => {
+    const x = Object.keys(data[0]).findIndex(key => key.toLowerCase().includes('sec'));
+    return {
+      data,
+      x: x ? x : 0,
+      y: 1
+    };
+  }
+  handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      const { y, data } = this.state;
+      const newY = (y + 1 >= data.length - 1) ? data.length - 1 : y + 1;
+      this.setState({ y: newY })
+    }
+    if (e.key === 'ArrowUp') {
+      const { y } = this.state;
+      const newY = y === 0 ? 0 : y - 1;
+      this.setState({ y: newY })
+    }
+  }
   componentWillUnmount() {
     delete this.ipc;
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   render() {
-    const { data } = this.state;
-    if (data.length === 0) return <div>Open a CSV File</div>;
-    return <LineGraph data={this.state.data} />
+    const { data, x, y } = this.state;
+    return <LineGraph data={data} x={x} y={y} />
   }
 }
 
