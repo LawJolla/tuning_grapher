@@ -15,7 +15,7 @@ let mainWindow;
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
-  const mainMenu = Menu.buildFromTemplate(menuTemplate);
+  const mainMenu = Menu.buildFromTemplate(menuTemplate(mainWindow));
   Menu.setApplicationMenu(mainMenu);
   // and load the index.html of the app.
   const startUrl = process.env.ELECTRON_START_URL || url.format({
