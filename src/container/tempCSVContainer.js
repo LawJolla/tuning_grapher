@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import ParseCSV from '../helpers/parseCSV';
-import LineGraph from '../components/lineGraph';
+import LineGraph from '../components/victoryLineGraph';
 const electron = window.require('electron');
 const { ipcRenderer }  = electron;
 
 class TempContainer extends Component {
-  state = { data: [], x: 0, y: 1 };
+  state = { data: [], x: 0, y: 1, xLine: 'Time (sec)', yLines: ['ECU: MAP (PSI)'] };
 
   componentWillMount() {
     this.ipc = ipcRenderer.on('csv:open', (e, d) => {
@@ -42,8 +42,8 @@ class TempContainer extends Component {
   }
 
   render() {
-    const { data, x, y } = this.state;
-    return <LineGraph data={data} x={x} y={y} />
+    const { data, x, y, xLine, yLines } = this.state;
+    return <LineGraph data={data} x={x} y={y} xLine={xLine} yLines={yLines} />
   }
 }
 

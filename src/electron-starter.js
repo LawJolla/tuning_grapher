@@ -14,7 +14,7 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({ width: 1440, height: 1080 })
   const mainMenu = Menu.buildFromTemplate(menuTemplate(mainWindow));
   Menu.setApplicationMenu(mainMenu);
   // and load the index.html of the app.
