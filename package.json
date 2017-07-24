@@ -24,6 +24,6 @@
     "run": "start && npm electron"
   },
   "devDependencies": {
-    "electron": "^1.6.11"
+    "electron": "^1.7.5"
   }
 }
