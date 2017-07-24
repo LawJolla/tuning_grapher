@@ -48,7 +48,7 @@ class LineGraph extends Component {
               strokeWidth={2}
               data={parsedData}
             />
-            <XAxis title={xTitle}/>
+            <XAxis title={xTitle} />
             <YAxis title={yTitle} />
           </FlexibleXYPlot>
         </div>

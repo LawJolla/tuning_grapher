@@ -1,21 +1,26 @@
 import React, { Component } from "react";
-import { VictoryAxis, VictoryLine, VictoryChart, VictoryTheme, VictoryTooltip } from "victory";
+import { VictoryAxis, VictoryLine, VictoryChart, VictoryTheme, VictoryTooltip, VictoryVoronoiContainer } from "victory";
+
+function getDomain(data, selector) {
+  return [Math.min(...data.map(x => x[selector])), Math.max(...data.map(y => y[selector]))];
+}
 
 class LineGraph extends Component {
   state = { width: 800, height: 400, parsedData: [] };
 
   parseLine(data, x, y) {
-    console.log("parsing...");
     return data
       .map((sample, index) => {
-        if (sample[x] === "" || sample[y[0]] === "") return undefined;
+        if (sample[x] === "" || sample[y] === "") return undefined;
         return {
           x: parseFloat(sample[x]),
-          y: parseFloat(sample[y[0]]),
-          label: parseFloat(sample[y[0]])
+          y: parseFloat(sample[y]),
         };
       })
       .filter(item => item);
+  }
+  parseLines(data, x, y) {
+    return y.map(line => this.parseLine(data, x, line))
   }
   componentWillReceiveProps(props) {
     this.updateData(props);
@@ -37,7 +42,7 @@ class LineGraph extends Component {
     this.setState({ height, width });
   };
   updateData = ({ data, xText, yText }) => {
-    const parsedData = this.parseLine(data, xText, yText);
+    const parsedData = this.parseLines(data, xText, yText);
     this.setState({ parsedData });
   };
   render() {
@@ -62,18 +67,59 @@ class LineGraph extends Component {
             width={width}
             height={height}
             theme={VictoryTheme.material}
-            title="hi"
+            style={{parent: {padding: 40}}}
+            padding={100}
+            containerComponent={
+              <VictoryVoronoiContainer
+                  labels={(d) => `${yText[0]}: ${d.y}`}
+              />
+            }
           >
             <VictoryAxis
-                style={{ parent: { border: "1px solid #ccc" } }}
                 label={xText}
-            />
-            <VictoryAxis dependentAxis
-                style={{ parent: { border: "1px solid #ccc" } }}
-                label={yText[0]}
+                style={{
+                  parent: {overflow: "visible"},
+                  axis: {stroke: "#756f6a"},
+                  axisLabel: {fontSize: 20, padding: 50},
+                  ticks: {stroke: "grey", size: 5},
+                  tickLabels: {fontSize: 15, padding: 5}
+                }}
             />
 
-            <VictoryLine data={parsedData} labelComponent={<VictoryTooltip/>} />
+
+            {
+              parsedData.map((d, index) => {
+                return (
+                    <g>
+                    <VictoryAxis dependentAxis
+                       label={yText[index]}
+                       orientation={index > 0 ? 'right' : 'left'}
+                       domain={getDomain(d, 'y')}
+                       style={{
+                         axis: {stroke: "#756f6a"},
+                         axisLabel: {fontSize: 20, padding: 80},
+                         ticks: {stroke: "grey", size: 5},
+                         tickLabels: {fontSize: 15, padding: 5},
+                       }}
+                    />
+                  <VictoryLine
+                      data={d}
+                      labelComponent={<VictoryTooltip/>}
+                      domain={{
+                        x: getDomain(d, 'x'),
+                        y: getDomain(d, 'y')
+                      }}
+                  />
+                  </g>
+
+                )
+              })
+            }
+
+
+
+
+
           </VictoryChart>
         </div>
         <div style={{ flex: "0 0 50%" }}>Hi</div>

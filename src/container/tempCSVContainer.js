@@ -5,7 +5,7 @@ const electron = window.require('electron');
 const { ipcRenderer }  = electron;
 
 class TempContainer extends Component {
-  state = { data: [], x: 0, y: 1, xText: 'ECU: RPM (RPM)', yText: ['ECU: MAP (PSI)'] };
+  state = { data: [], x: 0, y: 1, xText: 'Time (sec)', yText: ['ECU: MAP (PSI)', 'ECU: RPM (RPM)'] };
 
   componentWillMount() {
     this.ipc = ipcRenderer.on('csv:open', (e, d) => {
