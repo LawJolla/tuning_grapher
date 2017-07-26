@@ -1,7 +1,8 @@
 import Parse from 'papaparse';
 
 const defaultConfig = {
-  header: true
+  header: true,
+  skipEmptyLines: true
 };
 
 function parseCSV(csv, config = defaultConfig) {
