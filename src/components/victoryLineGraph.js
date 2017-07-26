@@ -5,6 +5,10 @@ function getDomain(data, selector) {
   return [Math.min(...data.map(x => x[selector])), Math.max(...data.map(y => y[selector]))];
 }
 
+const tickPadding = [ 0, 0, -15 ];
+const anchors = ["end", "end", "start"];
+const colors = ["black", "red", "blue"];
+
 class LineGraph extends Component {
   state = { width: 800, height: 400, parsedData: [] };
 
@@ -42,6 +46,7 @@ class LineGraph extends Component {
     this.setState({ height, width });
   };
   updateData = ({ data, xText, yText }) => {
+    console.log('updating data')
     const parsedData = this.parseLines(data, xText, yText);
     this.setState({ parsedData });
   };
@@ -90,11 +95,16 @@ class LineGraph extends Component {
             {
               parsedData.map((d, index) => {
                 return (
-                    <g>
+
                     <VictoryAxis dependentAxis
+                        // Use normalized tickValues (0 - 1)
+                        tickValues={[0.25, 0.5, 0.75, 1]}
+                        // Re-scale ticks by multiplying by correct maxima
+                        key={index}
+                       tickFormat={(t) => Math.ceil(t * getDomain(d, 'y')[1])}
                        label={yText[index]}
                        orientation={index > 0 ? 'right' : 'left'}
-                       domain={getDomain(d, 'y')}
+
                        style={{
                          axis: {stroke: "#756f6a"},
                          axisLabel: {fontSize: 20, padding: 80},
@@ -102,20 +112,21 @@ class LineGraph extends Component {
                          tickLabels: {fontSize: 15, padding: 5},
                        }}
                     />
-                  <VictoryLine
-                      data={d}
-                      labelComponent={<VictoryTooltip/>}
-                      domain={{
-                        x: getDomain(d, 'x'),
-                        y: getDomain(d, 'y')
-                      }}
-                  />
-                  </g>
-
                 )
               })
             }
-
+            {
+              parsedData.map((d, index) => {
+                return (
+                    <VictoryLine
+                        key={index}
+                        data={d}
+                        labelComponent={<VictoryTooltip/>}
+                        y={(datum) => datum.y/getDomain(d, 'y')[1]}
+                    />
+                )
+              })
+            }
 
 
 
