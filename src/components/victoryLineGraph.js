@@ -17,7 +17,7 @@ class LineGraph extends Component {
     window.addEventListener("resize", () => this.resizeGraph());
   }
   componentWillUnmount() {
-    window.removeEventListener("resize", this.resizeGraph());
+    window.removeEventListener("resize", () => this.resizeGraph());
   }
   resizeGraph = () => {
     const smallestHeight = 300;
